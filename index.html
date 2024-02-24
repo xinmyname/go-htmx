@@ -12,15 +12,17 @@
     <div class="row mt-4 -4">
         <div class="col-8">
             <h1 class="mb-4">Film List</h1>
-            <ul class="list-group fs-5 me-5">
+            <ul class="list-group fs-5 me-5" id="film-list">
                 {{ range .Films }}
-                    <li class="list-group-item bg-primary text-white">{{ .Title }} - {{ .Director }}</li>
+                    {{ block "film-list-element" . }}
+                        <li class="list-group-item bg-primary text-white">{{ .Title }} - {{ .Director }}</li>
+                    {{ end }}
                 {{ end }}
             </ul>
         </div>
         <div class="col-4">
             <h1 class="mb-4">Add Film</h1>
-            <form hx-post="/add-film/">
+            <form hx-post="/add-film/" hx-target="#film-list" hx-swap="beforeend" hx-indicator="#spinner">
                 <div class="mb-2">
                     <label for="film-title">Title</label>
                     <input type="text" class="form-control" id="film-title" name="title">
@@ -29,7 +31,10 @@
                     <label for="film-director">Director</label>
                     <input type="text" class="form-control" id="film-director" name="director">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status"></span>
+                    Submit
+                </button>
             </form>
         </div>
     </div>

@@ -34,8 +34,13 @@ func main() {
 	})
 
 	http.HandleFunc("/add-film/", func(w http.ResponseWriter, r *http.Request) {
-		log.Print("HTMLX request received")
-		log.Print(r.Header.Get("HX-Request"))
+		title := r.PostFormValue("title")
+		director := r.PostFormValue("director")
+
+		time.Sleep(2 * time.Second)
+
+		tmpl := template.Must(template.ParseFiles("index.html"))
+		tmpl.ExecuteTemplate(w, "film-list-element", Film{Title: title, Director: director})
 	})
 
 	log.Fatal(http.ListenAndServe(":8000", nil))

@@ -7,11 +7,18 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type Film struct {
 	Title    string
 	Director string
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
 func main() {
@@ -45,10 +52,21 @@ func main() {
 		title := r.PostFormValue("title")
 		director := r.PostFormValue("director")
 
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 
 		tmpl := template.Must(template.ParseFiles("index.html"))
 		tmpl.ExecuteTemplate(w, "film-list-element", Film{Title: title, Director: director})
+	})
+
+	mux.HandleFunc("/wsreload", func(w http.ResponseWriter, r *http.Request) {
+		ws, err := upgrader.Upgrade(w, r, nil)
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		ws.WriteMessage(websocket.TextMessage, []byte("Ready."))
 	})
 
 	log.Fatal(http.ListenAndServe(":8000", mux))

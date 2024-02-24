@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Film struct {
@@ -13,7 +14,7 @@ type Film struct {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
+	fmt.Println("go-htmx started! ", time.Now().Format("2006-01-02 15:04:05"))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl := template.Must(template.ParseFiles("index.html"))
